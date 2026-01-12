@@ -1,0 +1,19 @@
+name: Configure SSH Keys
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-ssh:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Configure SSH for GitHub
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+      - name: Verify SSH configuration
+        run: ssh -T git@github.com || echo "SSH key configured"
